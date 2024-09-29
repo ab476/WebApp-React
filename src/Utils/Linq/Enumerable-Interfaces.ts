@@ -1,13 +1,12 @@
-
 import { IEnumerable } from "./IEnumerable";
 import { Enumerable } from "./Enumerable";
 
 export interface IDisposableEnumerable<T> extends IEnumerable<T> {
-  dispasfose(): void;
+  dispose(): void;
 }
 
-export type PredicateFn<T> = ((element: T, index: number) => boolean);
-export type TypePredicateFn<T, TOther extends T> = ((element: T, index: number) => element is TOther);
+export type PredicateFn<T> = (element: T, index: number) => boolean;
+export type TypePredicateFn<T, TOther extends T> = (element: T, index: number) => element is TOther;
 export const TrueFn = () => true;
 
 /**
@@ -54,7 +53,7 @@ export function isIterable<T>(obj: any): obj is Iterable<T> {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isIterator<T>(obj: any): obj is Iterator<T> {
-	return !!obj && typeof obj.next === "function";
+  return !!obj && typeof obj.next === "function";
 }
 /**
  * Checks if the provided object is array-like.
@@ -76,26 +75,26 @@ export function isIterator<T>(obj: any): obj is Iterator<T> {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isArrayLike<T>(obj: any): obj is ArrayLike<T> {
-	return !!obj && typeof obj.length === "number" && Number.isInteger(obj.length); 
+  return !!obj && typeof obj.length === "number" && Number.isInteger(obj.length);
 }
 export function getIterable<T>(sourceObj: EnumeratorLike<T>): Iterable<T> {
-  return isIterable(sourceObj) ?  sourceObj : 
-	isArrayLike(sourceObj) ? 
-		(function*() {
-			for (let i = 0; i < sourceObj.length; i++) {
-				yield sourceObj[i];
-			}   
-		})() :
-	(function*(){
-		let obj: IteratorResult<T>;
-		while ((obj = sourceObj.next())) {
-			if(obj.done)
-				yield obj.value;
-			else break;
-		}
-	})(); 
+  return isIterable(sourceObj)
+    ? sourceObj
+    : isArrayLike(sourceObj)
+    ? (function* () {
+        for (let i = 0; i < sourceObj.length; i++) {
+          yield sourceObj[i];
+        }
+      })()
+    : (function* () {
+        let obj: IteratorResult<T>;
+        while ((obj = sourceObj.next())) {
+          if (obj.done) yield obj.value;
+          else break;
+        }
+      })();
 }
-export type EnumeratorLike<T> = IEnumerable<T> | Iterable<T> | T[] | Iterator<T> | ArrayLike<T>
+export type EnumeratorLike<T> = IEnumerable<T> | Iterable<T> | T[] | Iterator<T> | ArrayLike<T>;
 export function from<T>(obj: IEnumerable<T>): IEnumerable<T>;
 export function from<T>(obj: T[]): IEnumerable<T>;
 /**
@@ -167,7 +166,7 @@ export function from<T>(obj: Iterable<T>): IEnumerable<T>;
  *   console.log(letter); // Output: a, b, c
  * }
  */
-export function from<T>(obj: { length: number;[x: number]: T; }): IEnumerable<T>;
+export function from<T>(obj: { length: number; [x: number]: T }): IEnumerable<T>;
 /**
  * Creates an Enumerable from an input object, such as an array, iterable, iterator, or array-like object.
  * The function handles different types of input objects and returns an Enumerable that can be used for
@@ -225,7 +224,7 @@ export function from<T>(obj: { length: number;[x: number]: T; }): IEnumerable<T>
  */
 export function from<T>(obj: EnumeratorLike<T>): IEnumerable<T>;
 export function from<T>(obj: EnumeratorLike<T>): IEnumerable<T> {
-	return new Enumerable(getIterable(obj));
+  return new Enumerable(getIterable(obj));
 }
 /**
  * Creates an Enumerable that generates a sequence of numbers within a specified range.
@@ -250,11 +249,13 @@ export function from<T>(obj: EnumeratorLike<T>): IEnumerable<T> {
  * }
  */
 export function range(start: number, count: number, step: number = 1): IEnumerable<number> {
-  return new Enumerable((function*(start, count, step){
-    for (let i = 0; i < count; i++) {
-      yield start += step;
-    }
-  })(start, count, step ?? 1));
+  return new Enumerable(
+    (function* (start, count, step) {
+      for (let i = 0; i < count; i++) {
+        yield (start += step);
+      }
+    })(start, count, step ?? 1)
+  );
 }
 /**
  * Returns a hash code for a string.
@@ -272,13 +273,13 @@ export function range(start: number, count: number, step: number = 1): IEnumerab
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function hashCode(obj: string | any): number {
-  const s = typeof obj === 'string' ? obj : hashString(obj);
-  let h = 0, i = 0; const l = s.length;
-  if ( l > 0 )
-    while (i < l)
-      h = (h << 5) - h + s.charCodeAt(i++) | 0;
+  const s = typeof obj === "string" ? obj : hashString(obj);
+  let h = 0,
+    i = 0;
+  const l = s.length;
+  if (l > 0) while (i < l) h = ((h << 5) - h + s.charCodeAt(i++)) | 0;
   return h;
-};
+}
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function hasToString(obj: any): obj is { toString(): string } {
   return !!obj && typeof obj.toString === "function";
@@ -295,11 +296,8 @@ export function hasToString(obj: any): obj is { toString(): string } {
  * @example
  **/
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function hashString(obj: any): string{
-  return (obj === null) ? "null"
-    : (obj === undefined) ? "undefined"
-    : hasToString(obj) ? obj.toString() 
-    : JSON.stringify(obj);
+export function hashString(obj: any): string {
+  return obj === null ? "null" : obj === undefined ? "undefined" : hasToString(obj) ? obj.toString() : JSON.stringify(obj);
 }
 
 export function getRandomInt(max: number) {
@@ -331,11 +329,13 @@ export function empty<T>(): IEnumerable<T> {
  * @example
  **/
 export function repeat<T>(element: T, count?: number): IEnumerable<T> {
-  return new Enumerable((function*(element, count){
-    for (let i = 0; i < (count?? Infinity); i++) {
-      yield element;
-    }
-  })(element, count));
+  return new Enumerable(
+    (function* (element, count) {
+      for (let i = 0; i < (count ?? Infinity); i++) {
+        yield element;
+      }
+    })(element, count)
+  );
 }
 /**
  * Creates an Enumerable that generates a sequence of elements by invoking a specified generator function.
@@ -359,12 +359,14 @@ export function repeat<T>(element: T, count?: number): IEnumerable<T> {
  *   console.log(str);
  * }
  */
-export function generate<T>(func: () => T, count?: number): IEnumerable<T>{
-  return new Enumerable((function*(func, count){
-    for (let i = 0; i < (count?? Infinity); i++) {
-      yield func();
-    }
-  })(func, count));
+export function generate<T>(func: () => T, count?: number): IEnumerable<T> {
+  return new Enumerable(
+    (function* (func, count) {
+      for (let i = 0; i < (count ?? Infinity); i++) {
+        yield func();
+      }
+    })(func, count)
+  );
 }
 /**
  * Creates an Enumerable that generates a sequence of elements by applying a function to an initial seed value.
@@ -391,15 +393,17 @@ export function generate<T>(func: () => T, count?: number): IEnumerable<T>{
  * }
  */
 export function unfold<T>(seed: T, func: (value: T) => T | undefined): IEnumerable<T> {
-  return new Enumerable((function*(seed, func){
-    yield seed;
-    while(true){
-      const next = func(seed);
-      if(next === undefined) break;
-      yield next;
-      seed = next;
-    }
-  })(seed, func));
+  return new Enumerable(
+    (function* (seed, func) {
+      yield seed;
+      while (true) {
+        const next = func(seed);
+        if (next === undefined) break;
+        yield next;
+        seed = next;
+      }
+    })(seed, func)
+  );
 }
 
 // export function choice<T>(...params: T[]): IEnumerable<T>;
