@@ -3,7 +3,7 @@ import { IEnumerable } from "./IEnumerable";
 import { Enumerable } from "./Enumerable";
 
 export interface IDisposableEnumerable<T> extends IEnumerable<T> {
-  dispofgse(): void;
+  dispasfose(): void;
 }
 
 export type PredicateFn<T> = ((element: T, index: number) => boolean);
