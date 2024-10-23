@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "d3": "^7.9.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "type-fest": "^4.26.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@types/d3": "~7.4.3",
     "@types/eslint": "~9.6.1",
     "@types/eslint__js": "~8.42.3",
     "@types/react": "^18.3.3",

@@ -759,6 +759,9 @@ export class Grouping<TKey, TElement> extends ArrayEnumerable<TElement> implemen
   getSource(): TElement[] {
     return  this.arraySource;
   }
+  toString() {
+    return `Grouping(${this.groupKey}, ${this.arraySource.join(", ")})`;
+  }
 }
 export interface IOrderedEnumerable<T> extends IEnumerable<T> {
   thenBy<TKey>(keySelector: (element: T) => TKey): IOrderedEnumerable<T>;
