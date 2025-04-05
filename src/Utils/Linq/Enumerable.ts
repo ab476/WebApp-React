@@ -475,7 +475,10 @@ export class EntryList<T extends ILinkListNode<T>> extends Enumerable<T> impleme
     else this.lastEntry = entry.prev;
   }
 }
-export class Dictionary<TKey, TValue> extends Enumerable<KeyValue<TKey, TValue>> implements IDictionary<TKey, TValue>, IEnumerable<KeyValue<TKey, TValue>>, Iterable<KeyValue<TKey, TValue>> {
+export class Dictionary<TKey, TValue> 
+  extends Enumerable<KeyValue<TKey, TValue>> 
+  implements IDictionary<TKey, TValue>, IEnumerable<KeyValue<TKey, TValue>>, Iterable<KeyValue<TKey, TValue>> 
+{
   //
   protected countField = 0;
   protected buckets = new Map<string | number, EntryList<HashEntry<TKey, TValue>>>();
